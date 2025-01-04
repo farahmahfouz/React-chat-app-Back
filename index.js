@@ -23,7 +23,7 @@ const channelRouter = require("./Routes/channelRoute.js");
 
 app.use(
   cors({
-    origin: process.env.ORIGIN,
+    origin: 'https://react-chat-app-ten-flame.vercel.app',
     methods: "GET,POST,PUT,DELETE",
     credentials: true,
   })
