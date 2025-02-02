@@ -76,7 +76,7 @@ exports.login = async (req, res, next) => {
       },
     });
   } catch (err) {
-    console.error("Error during registration:", err);
+    console.error("Error during login:", err);
     res.status(500).json({ message: "Server error", error: err.message });
   }
 };
@@ -139,7 +139,6 @@ exports.updateProfile = async (req, res, next) => {
     console.error(err);
   }
 };
-
 
 exports.addProfileImage = async (req, res, next) => {
   try {
