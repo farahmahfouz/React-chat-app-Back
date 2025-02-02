@@ -5,8 +5,11 @@ const Channel = require("./Models/channelModel.js");
 exports.setupSocket = (server) => {
   const io = new SocketIOServer(server, {
     cors: {
-      origin: 'https://react-chat-app-ten-flame.vercel.app',
-      methods: "GET,POST",
+      origin: [
+        "https://react-chat-app-ten-flame.vercel.app",
+        "http://localhost:5173",
+      ],
+      methods: ["GET", "POST", "PUT", "DELETE"],
       credentials: true,
     },
   });
@@ -44,7 +47,7 @@ exports.setupSocket = (server) => {
 
   const sendChannelMessage = async (message) => {
     const { channelId, sender, content, messageType, fileURL } = message;
-    
+
     const createMessage = await Message.create({
       sender,
       reciever: null,
@@ -76,7 +79,7 @@ exports.setupSocket = (server) => {
       });
 
       if (channel.admin) {
-        const adminSocketId = userSocketMap.get(channel.admin[0]._id + '');
+        const adminSocketId = userSocketMap.get(channel.admin[0]._id + "");
         if (adminSocketId) {
           io.to(adminSocketId).emit("recieve-channel-message", finalData);
         }

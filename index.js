@@ -10,9 +10,18 @@ const { setupSocket } = require("./socket.js");
 require("express-async-errors");
 
 const app = express();
+app.use(
+  cors({
+    origin: [
+      "https://react-chat-app-ten-flame.vercel.app",
+      "http://localhost:5173",
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
+);
 dotenv.config();
 const server = http.createServer(app);
-
 
 const userRouter = require("./Routes/userRoute.js");
 const contactRouter = require("./Routes/contactRoute.js");
@@ -21,21 +30,13 @@ const channelRouter = require("./Routes/channelRoute.js");
 
 // app.use('/uploads/profiles', express.static('uploads/profiles'));
 
-app.use(
-  cors({
-    origin: 'https://react-chat-app-ten-flame.vercel.app',
-    methods: "GET,POST,PUT,DELETE",
-    credentials: true,
-  })
-);
-
-app.use('/upload/file', express.static('upload/file'));
+app.use("/upload/file", express.static("upload/file"));
 app.use(express.json());
 app.use(cookieParser());
 
-// Increase the payload size limit to 50 MB
-app.use(bodyParser.json({ limit: "50mb" }));
-app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
+// Increase the payload size limit to 10 MB
+app.use(bodyParser.json({ limit: "5mb" }));
+app.use(bodyParser.urlencoded({ limit: "5mb", extended: true }));
 
 app.get("/", (req, res) => {
   res.send("Welcome on our server 🐣");

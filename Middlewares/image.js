@@ -1,6 +1,7 @@
 const AppError = require("../utils/App.Error");
 const multer = require("multer");
 const ImageKit = require("imagekit");
+const sharp = require("sharp");
 
 // Configure ImageKit
 const imagekit = new ImageKit({
@@ -26,7 +27,7 @@ const upload = multer({
   storage: multerStorage,
   fileFilter: multerFilterImage,
   limits: {
-    fileSize: 20 * 1024 * 1024, // 20 MB limit
+    fileSize: 2 * 1024 * 1024, // 2 MB limit
   },
 });
 
@@ -39,13 +40,27 @@ exports.handleImages = (fieldname) => {
     if (!files) return next();
 
     try {
-      // Upload images to ImageKit
+      // Upload images to ImageKit with compression if needed
       const uploadedImages = await Promise.all(
         files.map(async (file) => {
+          let processedBuffer = file.buffer;
+
+          // Check if file size is greater than 2MB
+          if (file.size > 2 * 1024 * 1024) {
+            processedBuffer = await sharp(file.buffer)
+              .resize(1000, 1000, {
+                // Reduced dimensions for smaller file size
+                fit: "inside",
+                withoutEnlargement: true,
+              })
+              .jpeg({ quality: 70 }) // Reduced quality for smaller file size
+              .toBuffer();
+          }
+
           const result = await imagekit.upload({
-            file: file.buffer, // file buffer from multer
-            fileName: `api-${Date.now()}.jpeg`, // unique filename
-            folder: "/uploads", // optional: specify folder in ImageKit
+            file: processedBuffer,
+            fileName: `api-${Date.now()}.jpeg`,
+            folder: "/uploads",
           });
           return result.url;
         })
@@ -55,7 +70,7 @@ exports.handleImages = (fieldname) => {
       req.body[fieldname] = uploadedImages;
       next();
     } catch (error) {
-      return next(new AppError("Error uploading images to ImageKit", 500));
+      return next(new AppError("Error processing or uploading images", 500));
     }
   };
 };
