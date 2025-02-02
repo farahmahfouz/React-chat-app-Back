@@ -5,7 +5,7 @@ const Channel = require("./Models/channelModel.js");
 exports.setupSocket = (server) => {
   const io = new SocketIOServer(server, {
     cors: {
-      origin: process.env.ORIGIN || "http://localhost:5173",
+      origin: 'https://react-chat-app-ten-flame.vercel.app', 'http://localhost:5173',
       methods: "GET,POST",
       credentials: true,
     },
