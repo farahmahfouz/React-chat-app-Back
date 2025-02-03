@@ -13,7 +13,7 @@ const app = express();
 app.use(
   cors({
     origin: [
-      "https://react-chat-app-ten-flame.vercel.app",
+      "https://react-chat-app-kappa-eosin.vercel.app/",
       "http://localhost:5173",
     ],
     methods: ["GET", "POST", "PUT", "DELETE"],
